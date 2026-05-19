@@ -12,6 +12,8 @@ metadata:
     argocd/app-name: ${{ values.app_name | lower }}-${{values.app_env}}
     backstage.io/kubernetes-id: ${{values.app_name}}
     sonarqube.org/project-key: ${{ values.app_name | lower }}
+    prometheus.io/rule: "container_cpu_usage_seconds_total{pod=~'${{ values.app_name | trim }}.*'}|pod,container_memory_usage_bytes{pod=~'${{ values.app_name | trim }}.*'}|pod"
+    prometheus.io/alert: "all"
 
 spec:
   type: service
