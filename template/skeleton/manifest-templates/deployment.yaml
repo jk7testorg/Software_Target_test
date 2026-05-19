@@ -7,9 +7,6 @@ metadata:
     app: ${APP_NAME}
     backstage.io/kubernetes-id: ${APP_NAME}
     environment: ${NAMESPACE}
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "${APP_PORTS}"
 spec:
   replicas: 1
   selector:
@@ -21,6 +18,9 @@ spec:
         app: ${APP_NAME}
         backstage.io/kubernetes-id: ${APP_NAME}
         environment: ${NAMESPACE}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "${APP_PORT}"
     spec:
       containers:
         - name: ${APP_NAME}
