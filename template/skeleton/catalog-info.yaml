@@ -13,7 +13,8 @@ metadata:
     backstage.io/kubernetes-id: ${{values.app_name}}
     sonarqube.org/project-key: ${{ values.app_name | lower }}
     prometheus.io/rule: "kube_pod_container_resource_requests{pod=~'${{ values.app_name | lower }}.*'}|resource,kube_pod_container_status_restarts_total{pod=~'${{ values.app_name | lower }}.*'}|container"
-    prometheus.io/alert: "prometheus.io/alert: "KubePodCrashLooping,KubeDeploymentReplicasMismatch,KubePodNotReady,KubeContainerWaiting,KubeJobFailed"
+    prometheus.io/alert: "KubePodCrashLooping,KubeDeploymentReplicasMismatch,KubePodNotReady,KubeContainerWaiting,KubeContainerOOMKilled,KubeDeploymentRolloutStuck,KubeJobFailed"
+
 
 spec:
   type: service
