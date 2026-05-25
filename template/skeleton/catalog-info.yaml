@@ -13,7 +13,7 @@ metadata:
     backstage.io/kubernetes-id: ${{values.app_name}}
     sonarqube.org/project-key: ${{ values.app_name | lower }}
     prometheus.io/rule: "container_cpu_usage_seconds_total{pod=~'${{ values.app_name | trim }}.*'}|pod,container_memory_usage_bytes{pod=~'${{ values.app_name | trim }}.*'}|pod"
-    prometheus.io/alert: "all"
+    prometheus.io/alert: "prometheus.io/alert: "KubePodCrashLooping,KubeDeploymentReplicasMismatch,KubePodNotReady,KubeContainerWaiting,KubeJobFailed"
 
 spec:
   type: service
