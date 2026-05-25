@@ -13,8 +13,8 @@ metadata:
     backstage.io/kubernetes-id: ${{values.app_name}}
     sonarqube.org/project-key: ${{ values.app_name | lower }}
     prometheus.io/rule: "kube_pod_container_resource_requests{pod=~'${{ values.app_name | lower }}.*'}|resource,kube_pod_container_status_running{pod=~'${{ values.app_name | lower }}.*'}|container"
-    prometheus.io/alert: "KubePodCrashLooping,KubeDeploymentReplicasMismatch,KubePodNotReady,KubeContainerWaiting,KubeContainerOOMKilled,KubeDeploymentRolloutStuck,KubeJobFailed"
-
+   # prometheus.io/alert: "KubePodCrashLooping,KubeDeploymentReplicasMismatch,KubePodNotReady,KubeContainerWaiting,KubeContainerOOMKilled,KubeDeploymentRolloutStuck,KubeJobFailed"
+    prometheus.io/alert: 'High CPU Usage,Memory Exhaustion'
 
 spec:
   type: service
