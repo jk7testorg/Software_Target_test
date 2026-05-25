@@ -9,12 +9,13 @@ metadata:
     github.com/project-slug: jk7testorg/${{values.app_name}}
     backstage.io/techdocs-ref: dir:.
     jenkins.io/job-full-name: jk7test/${{values.app_name | trim}}/main
-    argocd/app-name: ${{ values.app_name | lower }}-${{values.app_env}}
+    argocd/app-name: ${{ values.app_name | lower }}-${{ values.app_env }}
     backstage.io/kubernetes-id: ${{values.app_name}}
     sonarqube.org/project-key: ${{ values.app_name | lower }}
     prometheus.io/rule: "kube_pod_container_resource_requests{pod=~'${{ values.app_name | lower }}.*'}|resource,kube_pod_container_status_running{pod=~'${{ values.app_name | lower }}.*'}|container"
-   # prometheus.io/alert: "KubePodCrashLooping,KubeDeploymentReplicasMismatch,KubePodNotReady,KubeContainerWaiting,KubeContainerOOMKilled,KubeDeploymentRolloutStuck,KubeJobFailed"
-    prometheus.io/alert: 'High CPU Usage,Memory Exhaustion'
+    #prometheus.io/alert: "KubePodCrashLooping,KubeDeploymentReplicasMismatch,KubePodNotReady,KubeContainerWaiting,KubeContainerOOMKilled,KubeDeploymentRolloutStuck,KubeJobFailed"
+    prometheus.io/alert: "all"
+    prometheus.io/labels: "namespace=${{ values.app_env }}"
 
 spec:
   type: service
