@@ -3,7 +3,7 @@ kind: Template
 
 metadata:
   name: retrofit-jenkins-argocd-Target-Namespace
-  title: Integrating CI/CD Into Existing Repo Into Target Namespace
+  title: Integrating CI/CD pipeline Into Existing Repo and Target Environment
   description: Inject CI/CD directly into Desired Repo/Branch (Node.js / Java Maven / Java Gradle / Python)
 
 spec:
@@ -47,12 +47,18 @@ spec:
             - "Quality Assurance"
             - "Production"
 
+        # ✅ NEW — Target Cluster Selection
+        target_cluster:
+          title: Target Deployment Cluster
+          type: string
+          description: "Enter the target GKE cluster name manually"
+          default: backstage-poc-autopilot
+
         # Hidden — auto set from language
         app_port:
-          title: App Port 
+          title: App Port
           type: string
           ui:widget: hidden
-          # default: "8080"
 
       dependencies:
         language:
@@ -114,6 +120,7 @@ spec:
           app_env: ${{ parameters.environment }}
           language: ${{ parameters.language }}
           app_port: ${{ parameters.app_port }}
+          target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
 
     # ─── Node.js ──────────────────────────────────────────────────────────────────
     - id: fetch-nodejs-pipeline
@@ -127,6 +134,7 @@ spec:
           app_name: ${{ parameters.repo }}
           app_env: ${{ parameters.environment }}
           app_port: ${{ parameters.app_port }}
+          target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
 
     # ─── Java Maven ───────────────────────────────────────────────────────────────
     - id: fetch-java-maven-pipeline
@@ -140,6 +148,7 @@ spec:
           app_name: ${{ parameters.repo }}
           app_env: ${{ parameters.environment }}
           app_port: ${{ parameters.app_port }}
+          target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
 
     # ─── Java Gradle ──────────────────────────────────────────────────────────────
     - id: fetch-java-gradle-pipeline
@@ -153,6 +162,7 @@ spec:
           app_name: ${{ parameters.repo }}
           app_env: ${{ parameters.environment }}
           app_port: ${{ parameters.app_port }}
+          target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
 
     # ─── Python ───────────────────────────────────────────────────────────────────
     - id: fetch-python-pipeline
@@ -166,25 +176,211 @@ spec:
           app_name: ${{ parameters.repo }}
           app_env: ${{ parameters.environment }}
           app_port: ${{ parameters.app_port }}
+          target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
 
-    # ─── Single Push Step — environment se branch auto decide ────────────────────
+    # ─── Single Push Step ─────────────────────────────────────────────────────────
     - id: push-to-repo
       name: Inject CI/CD Directly
       action: github:push
       input:
         repoUrl: github.com?owner=jk7testorg&repo=${{ parameters.repo }}
         branch: main
-        commitMessage: "chore: inject ${{ parameters.language }} CI/CD [port:${{ parameters.app_port }}] [${{ parameters.environment }}]"
+        commitMessage: "chore: inject ${{ parameters.language }} CI/CD [port:${{ parameters.app_port }}] [${{ parameters.environment }}] [cluster:${{ parameters.target_cluster }}]"
         sourcePath: ./
 
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: https://github.com/jk7testorg/${{ parameters.repo | trim }}/blob/main
-        catalogInfoPath: "/catalog-info.yaml"
-        
   output:
     links:
       - title: View Repository
         url: https://github.com/jk7testorg/${{ parameters.repo | trim }}/tree/main
+
+
+# apiVersion: scaffolder.backstage.io/v1beta3
+# kind: Template
+
+# metadata:
+#   name: retrofit-jenkins-argocd-Target-Namespace
+#   title: Integrating CI/CD Into Existing Repo Into Target Namespace
+#   description: Inject CI/CD directly into Desired Repo/Branch (Node.js / Java Maven / Java Gradle / Python)
+
+# spec:
+#   owner: development
+#   type: service
+
+#   parameters:
+#     - title: Select Repo & Language
+#       required:
+#         - repo
+#         - language
+#       properties:
+
+#         repo:
+#           title: Select Repository
+#           type: string
+
+#         language:
+#           title: Project Language / Build Tool
+#           type: string
+#           enum:
+#             - nodejs
+#             - java-maven
+#             - java-gradle
+#             - python
+#           enumNames:
+#             - "Node.js (npm)    → port 3000"
+#             - "Java (Maven)     → port 8080"
+#             - "Java (Gradle)    → port 8080"
+#             - "Python (pip)     → port 5000"
+
+#         environment:
+#           title: Target Environment
+#           type: string
+#           enum:
+#             - dev
+#             - qa
+#             - prod
+#           enumNames:
+#             - "Development"
+#             - "Quality Assurance"
+#             - "Production"
+
+#         # Hidden — auto set from language
+#         app_port:
+#           title: App Port 
+#           type: string
+#           ui:widget: hidden
+#           # default: "8080"
+
+#       dependencies:
+#         language:
+#           oneOf:
+#             - properties:
+#                 language:
+#                   enum:
+#                     - nodejs
+#                 app_port:
+#                   type: string
+#                   default: "3000"
+#                   ui:widget: hidden
+#               required:
+#                 - app_port
+
+#             - properties:
+#                 language:
+#                   enum:
+#                     - java-maven
+#                 app_port:
+#                   type: string
+#                   default: "8080"
+#                   ui:widget: hidden
+#               required:
+#                 - app_port
+
+#             - properties:
+#                 language:
+#                   enum:
+#                     - java-gradle
+#                 app_port:
+#                   type: string
+#                   default: "8080"
+#                   ui:widget: hidden
+#               required:
+#                 - app_port
+
+#             - properties:
+#                 language:
+#                   enum:
+#                     - python
+#                 app_port:
+#                   type: string
+#                   default: "5000"
+#                   ui:widget: hidden
+#               required:
+#                 - app_port
+
+#   steps:
+
+#     # ─── Common files ─────────────────────────────────────────────────────────────
+#     - id: fetch-common
+#       name: Fetch Common Template Files
+#       action: fetch:template
+#       input:
+#         url: ./template/skeleton
+#         values:
+#           app_name: ${{ parameters.repo }}
+#           app_env: ${{ parameters.environment }}
+#           language: ${{ parameters.language }}
+#           app_port: ${{ parameters.app_port }}
+
+#     # ─── Node.js ──────────────────────────────────────────────────────────────────
+#     - id: fetch-nodejs-pipeline
+#       name: Fetch Node.js Jenkinsfile
+#       if: ${{ parameters.language === "nodejs" }}
+#       action: fetch:template
+#       input:
+#         url: ./template/nodejs
+#         targetPath: ./
+#         values:
+#           app_name: ${{ parameters.repo }}
+#           app_env: ${{ parameters.environment }}
+#           app_port: ${{ parameters.app_port }}
+
+#     # ─── Java Maven ───────────────────────────────────────────────────────────────
+#     - id: fetch-java-maven-pipeline
+#       name: Fetch Java Maven Jenkinsfile
+#       if: ${{ parameters.language === "java-maven" }}
+#       action: fetch:template
+#       input:
+#         url: ./template/java-maven
+#         targetPath: ./
+#         values:
+#           app_name: ${{ parameters.repo }}
+#           app_env: ${{ parameters.environment }}
+#           app_port: ${{ parameters.app_port }}
+
+#     # ─── Java Gradle ──────────────────────────────────────────────────────────────
+#     - id: fetch-java-gradle-pipeline
+#       name: Fetch Java Gradle Jenkinsfile
+#       if: ${{ parameters.language === "java-gradle" }}
+#       action: fetch:template
+#       input:
+#         url: ./template/java-gradle
+#         targetPath: ./
+#         values:
+#           app_name: ${{ parameters.repo }}
+#           app_env: ${{ parameters.environment }}
+#           app_port: ${{ parameters.app_port }}
+
+#     # ─── Python ───────────────────────────────────────────────────────────────────
+#     - id: fetch-python-pipeline
+#       name: Fetch Python Jenkinsfile
+#       if: ${{ parameters.language === "python" }}
+#       action: fetch:template
+#       input:
+#         url: ./template/python
+#         targetPath: ./
+#         values:
+#           app_name: ${{ parameters.repo }}
+#           app_env: ${{ parameters.environment }}
+#           app_port: ${{ parameters.app_port }}
+
+#     # ─── Single Push Step — environment se branch auto decide ────────────────────
+#     - id: push-to-repo
+#       name: Inject CI/CD Directly
+#       action: github:push
+#       input:
+#         repoUrl: github.com?owner=jk7testorg&repo=${{ parameters.repo }}
+#         branch: main
+#         commitMessage: "chore: inject ${{ parameters.language }} CI/CD [port:${{ parameters.app_port }}] [${{ parameters.environment }}]"
+#         sourcePath: ./
+
+#     - id: register
+#       name: Register
+#       action: catalog:register
+#       input:
+#         repoContentsUrl: https://github.com/jk7testorg/${{ parameters.repo | trim }}/blob/main
+#         catalogInfoPath: "/catalog-info.yaml"
+        
+#   output:
+#     links:
+#       - title: View Repository
+#         url: https://github.com/jk7testorg/${{ parameters.repo | trim }}/tree/main
