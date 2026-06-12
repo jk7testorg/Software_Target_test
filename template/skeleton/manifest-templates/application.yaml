@@ -32,7 +32,8 @@ spec:
     targetRevision: main
     path: apps/${APP_NAME}/${NAMESPACE}
   destination:
-    server: https://kubernetes.default.svc
+    #server: https://kubernetes.default.svc
+    server: ${TARGET_CLUSTER_SERVER}
     namespace: ${NAMESPACE}
   syncPolicy:
     automated:
