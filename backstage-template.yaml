@@ -48,20 +48,20 @@ spec:
             - "Production"
 
         # ✅ NEW — Target Cluster Selection
-        target_cluster:
-          title: Target Deployment Cluster
-          type: string
-          description: "Enter the target GKE cluster name manually"
-          default: backstage-poc-autopilot
         # target_cluster:
         #   title: Target Deployment Cluster
         #   type: string
-        #   description: Select the GKE cluster to deploy to
-        #   ui:field: EntityPicker
-        #   ui:options:
-        #     catalogFilter:
-        #       kind: Resource
-        #       spec.type: kubernetes-cluster
+        #   description: "Enter the target GKE cluster name manually"
+        #   default: backstage-poc-autopilot
+        target_cluster:
+          title: Target Deployment Cluster
+          type: string
+          description: Select the GKE cluster to deploy to
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: Resource
+              spec.type: kubernetes-cluster
 
         # Hidden — auto set from language
         app_port:
