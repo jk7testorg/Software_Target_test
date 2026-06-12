@@ -129,7 +129,8 @@ spec:
           app_env: ${{ parameters.environment }}
           language: ${{ parameters.language }}
           app_port: ${{ parameters.app_port }}
-          target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
+          #target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
+          target_cluster: ${{ parameters.target_cluster | parseEntityRef | pick('name') }}
 
     # ─── Node.js ──────────────────────────────────────────────────────────────────
     - id: fetch-nodejs-pipeline
@@ -143,7 +144,8 @@ spec:
           app_name: ${{ parameters.repo }}
           app_env: ${{ parameters.environment }}
           app_port: ${{ parameters.app_port }}
-          target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
+          #target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
+          target_cluster: ${{ parameters.target_cluster | parseEntityRef | pick('name') }}
 
     # ─── Java Maven ───────────────────────────────────────────────────────────────
     - id: fetch-java-maven-pipeline
@@ -157,7 +159,8 @@ spec:
           app_name: ${{ parameters.repo }}
           app_env: ${{ parameters.environment }}
           app_port: ${{ parameters.app_port }}
-          target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
+          #target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
+          target_cluster: ${{ parameters.target_cluster | parseEntityRef | pick('name') }}
 
     # ─── Java Gradle ──────────────────────────────────────────────────────────────
     - id: fetch-java-gradle-pipeline
@@ -171,7 +174,8 @@ spec:
           app_name: ${{ parameters.repo }}
           app_env: ${{ parameters.environment }}
           app_port: ${{ parameters.app_port }}
-          target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
+          #target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
+          target_cluster: ${{ parameters.target_cluster | parseEntityRef | pick('name') }}
 
     # ─── Python ───────────────────────────────────────────────────────────────────
     - id: fetch-python-pipeline
@@ -185,7 +189,8 @@ spec:
           app_name: ${{ parameters.repo }}
           app_env: ${{ parameters.environment }}
           app_port: ${{ parameters.app_port }}
-          target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
+          #target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
+          target_cluster: ${{ parameters.target_cluster | parseEntityRef | pick('name') }}
 
     # ─── Single Push Step ─────────────────────────────────────────────────────────
     - id: push-to-repo
