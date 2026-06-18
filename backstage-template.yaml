@@ -155,7 +155,8 @@ spec:
           app_port: ${{ parameters.app_port }}
           #target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
           target_cluster: ${{ parameters.target_cluster | parseEntityRef | pick('name') }}
-
+          owner: ${{ parameters.owner }}
+          
     # ─── Java Maven ───────────────────────────────────────────────────────────────
     - id: fetch-java-maven-pipeline
       name: Fetch Java Maven Jenkinsfile
@@ -170,6 +171,7 @@ spec:
           app_port: ${{ parameters.app_port }}
           #target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
           target_cluster: ${{ parameters.target_cluster | parseEntityRef | pick('name') }}
+          owner: ${{ parameters.owner }}
 
     # ─── Java Gradle ──────────────────────────────────────────────────────────────
     - id: fetch-java-gradle-pipeline
@@ -185,7 +187,8 @@ spec:
           app_port: ${{ parameters.app_port }}
           #target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
           target_cluster: ${{ parameters.target_cluster | parseEntityRef | pick('name') }}
-
+          owner: ${{ parameters.owner }}
+          
     # ─── Python ───────────────────────────────────────────────────────────────────
     - id: fetch-python-pipeline
       name: Fetch Python Jenkinsfile
@@ -200,7 +203,8 @@ spec:
           app_port: ${{ parameters.app_port }}
           #target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
           target_cluster: ${{ parameters.target_cluster | parseEntityRef | pick('name') }}
-
+          owner: ${{ parameters.owner }}
+          
     # ─── Single Push Step ─────────────────────────────────────────────────────────
     - id: push-to-repo
       name: Inject CI/CD Directly
@@ -210,6 +214,13 @@ spec:
         branch: main
         commitMessage: "chore: inject ${{ parameters.language }} CI/CD [port:${{ parameters.app_port }}] [${{ parameters.environment }}] [cluster:${{ parameters.target_cluster }}]"
         sourcePath: ./
+
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: https://github.com/jk7testorg/${{ parameters.repo }}/blob/main
+        catalogInfoPath: /catalog-info.yaml
 
   output:
     links:
