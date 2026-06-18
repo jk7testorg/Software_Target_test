@@ -19,7 +19,8 @@ metadata:
 
 spec:
   type: service
-  owner: development
+  #owner: development
+  owner: ${{ values.owner }}
   lifecycle: experimental
 
 # apiVersion: backstage.io/v1alpha1
