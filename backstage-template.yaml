@@ -140,6 +140,7 @@ spec:
           app_port: ${{ parameters.app_port }}
           #target_cluster: ${{ parameters.target_cluster }}    # ✅ NEW
           target_cluster: ${{ parameters.target_cluster | parseEntityRef | pick('name') }}
+          owner: ${{ parameters.owner }}
 
     # ─── Node.js ──────────────────────────────────────────────────────────────────
     - id: fetch-nodejs-pipeline
