@@ -28,8 +28,7 @@ spec:
           ui:field: OwnerPicker
           ui:options:
             catalogFilter:
-              kind: [Group, User]
-          default: user:default/${{ user.entity.metadata.name }}     
+              kind: [User]    
           
         language:
           title: Project Language / Build Tool
